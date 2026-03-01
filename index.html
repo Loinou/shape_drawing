@@ -1147,6 +1147,11 @@ function analyze() {
     document.getElementById('breakdown').style.display='none';
   }
 
+  // Clear the drawn strokes now that the rating is displayed
+  state.strokes = [];
+  state.current = [];
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   // Draw fitted shape overlay for shapes — pass the fitted params we already computed
   if (currentType()==='shape' && fitted) {
     drawFittedOverlay(fitted);
