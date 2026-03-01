@@ -476,6 +476,7 @@ let state = {
   best:       {},
   streak:     0,
   lastGood:   false,
+  rated:      false,  // true after Done is pressed; triggers clear on next stroke start
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -625,6 +626,13 @@ canvas.addEventListener('touchmove',  e => { e.preventDefault(); continueStroke(
 canvas.addEventListener('touchend',   e => { e.preventDefault(); endStroke(); });
 
 function startStroke(e) {
+  if (state.rated) {
+    state.rated = false;
+    state.strokes = [];
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawGhost();
+    resetScoreDisplay();
+  }
   state.drawing = true;
   state.current = [];
   const p = getPos(e);
@@ -1147,10 +1155,8 @@ function analyze() {
     document.getElementById('breakdown').style.display='none';
   }
 
-  // Clear the drawn strokes now that the rating is displayed
-  state.strokes = [];
-  state.current = [];
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Mark as rated so the canvas clears on the next stroke start
+  state.rated = true;
 
   // Draw fitted shape overlay for shapes — pass the fitted params we already computed
   if (currentType()==='shape' && fitted) {
