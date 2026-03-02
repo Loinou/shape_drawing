@@ -1,0 +1,360 @@
+:root {
+  --paper:    #faf8f0;
+  --line:     #aac4e8;
+  --margin:   #f08080;
+  --ink:      #1a237e;
+  --pencil:   #444;
+  --red:      #e53935;
+  --green:    #2e7d32;
+  --gold:     #f9a825;
+  --shadow:   rgba(0,0,0,0.08);
+  --line-h:   36px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  min-height: 100dvh;
+  background: #d6cfc0;
+  background-image:
+    repeating-linear-gradient(90deg, transparent, transparent 29px, #c9c2b2 29px, #c9c2b2 30px),
+    repeating-linear-gradient(transparent, transparent 29px, #c9c2b2 29px, #c9c2b2 30px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 16px 12px 24px;
+  font-family: 'Patrick Hand', cursive;
+}
+
+/* ── NOTEBOOK PAGE ── */
+.notebook {
+  width: min(480px, 100%);
+  background: var(--paper);
+  border-radius: 4px 12px 12px 4px;
+  box-shadow:
+    -6px 0 0 #c8b89a,
+    -12px 0 0 #d4c4aa,
+    4px 4px 18px rgba(0,0,0,0.25),
+    inset 0 0 40px rgba(200,190,160,0.15);
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 24px;
+}
+
+/* Red margin line */
+.notebook::before {
+  content: '';
+  position: absolute;
+  left: 52px;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: var(--margin);
+  opacity: 0.7;
+  z-index: 1;
+}
+
+/* Horizontal ruled lines */
+.ruled-lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── HEADER ── */
+.header {
+  position: relative;
+  z-index: 2;
+  padding: 14px 20px 10px 64px;
+  border-bottom: 2px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.header h1 {
+  font-family: 'Schoolbell', cursive;
+  font-size: 1.9rem;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.header .subject {
+  font-size: 0.85rem;
+  color: #888;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 1px;
+  flex: 1;
+}
+
+/* ── TABS ── */
+.tabs {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  padding: 8px 12px 0 64px;
+  gap: 2px;
+  background: transparent;
+}
+.tab {
+  font-family: 'Schoolbell', cursive;
+  font-size: 0.8rem;
+  padding: 4px 14px 3px;
+  border: 1.5px solid #ccc;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  background: #ede9dd;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.tab.active {
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--line);
+  font-weight: bold;
+}
+
+/* ── MODE PILLS (shapes / letters / numbers) ── */
+.mode-row {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 16px 6px 64px;
+  border-top: 1.5px solid var(--line);
+}
+.pill {
+  font-family: 'Patrick Hand', cursive;
+  font-size: 0.75rem;
+  padding: 3px 12px;
+  border-radius: 20px;
+  border: 1.5px solid #bbb;
+  background: transparent;
+  color: #777;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pill.active {
+  background: var(--ink);
+  color: white;
+  border-color: var(--ink);
+}
+
+/* ── SETTINGS BAR ── */
+.settings-bar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 5px 16px 8px 64px;
+  font-size: 0.72rem;
+  color: #888;
+}
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle-label input { display:none; }
+.toggle-box {
+  width: 28px; height: 16px;
+  border-radius: 8px;
+  border: 1.5px solid #bbb;
+  background: #ddd;
+  position: relative;
+  transition: background 0.2s;
+}
+.toggle-box::after {
+  content:'';
+  position: absolute;
+  left: 2px; top: 2px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: white;
+  transition: left 0.2s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.toggle-label input:checked + .toggle-box { background: var(--ink); border-color: var(--ink); }
+.toggle-label input:checked + .toggle-box::after { left: 14px; }
+
+/* ── CANVAS AREA ── */
+.canvas-section {
+  position: relative;
+  z-index: 2;
+  margin: 0 16px 0 64px;
+}
+.canvas-wrap {
+  position: relative;
+  cursor: crosshair;
+  touch-action: none;
+  border-bottom: 2px solid var(--line);
+}
+canvas { display: block; }
+
+/* Ghost overlay canvas */
+#ghostCanvas {
+  position: absolute;
+  top: 0; left: 0;
+  pointer-events: none;
+}
+
+/* ── CHARACTER NAV ── */
+.char-nav {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 16px;
+}
+.nav-btn {
+  font-family: 'Schoolbell', cursive;
+  font-size: 1.1rem;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid #bbb;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.nav-btn:hover { border-color: var(--ink); color: var(--ink); }
+.char-display {
+  font-family: 'Schoolbell', cursive;
+  font-size: 2.2rem;
+  color: var(--ink);
+  min-width: 80px;
+  text-align: center;
+  border-bottom: 2px dashed var(--line);
+  padding-bottom: 2px;
+}
+
+/* ── SCORE SECTION ── */
+.score-section {
+  position: relative;
+  z-index: 2;
+  padding: 6px 16px 4px 64px;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.score-big {
+  font-family: 'Schoolbell', cursive;
+  font-size: 2.4rem;
+  color: var(--pencil);
+  line-height: 1;
+  min-width: 80px;
+}
+.score-big.s-excellent { color: var(--green); }
+.score-big.s-good      { color: #1976d2; }
+.score-big.s-ok        { color: var(--gold); }
+.score-big.s-bad       { color: var(--red); }
+
+.score-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 0.7rem;
+  color: #999;
+}
+.score-breakdown span { display: flex; gap: 4px; align-items: center; }
+.sub-bar {
+  display: inline-block;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--line);
+  transition: width 0.4s ease;
+}
+.sub-bar.shape-bar { background: #1976d2; }
+.sub-bar.order-bar { background: var(--gold); }
+
+.verdict {
+  font-family: 'Schoolbell', cursive;
+  font-size: 1rem;
+  color: var(--red);
+  transform: rotate(-1.5deg);
+  display: inline-block;
+  margin-left: 4px;
+}
+
+/* ── STATS FOOTER ── */
+.stats-footer {
+  position: relative;
+  z-index: 2;
+  padding: 4px 16px 4px 64px;
+  font-size: 0.7rem;
+  color: #bbb;
+  border-top: 1px solid #e8e0d0;
+  display: flex;
+  gap: 18px;
+}
+.stats-footer b { color: #999; }
+
+/* ── ACTION BUTTONS ── */
+.action-row {
+  position: relative;
+  z-index: 2;
+  padding: 10px 16px 4px 64px;
+  display: flex;
+  gap: 8px;
+}
+.action-btn {
+  font-family: 'Patrick Hand', cursive;
+  font-size: 0.75rem;
+  padding: 5px 16px;
+  border-radius: 4px;
+  border: 1.5px solid #bbb;
+  background: transparent;
+  color: #777;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.action-btn:hover { border-color: var(--ink); color: var(--ink); }
+.action-btn.primary { background: var(--ink); color: white; border-color: var(--ink); }
+
+/* Stroke order dots */
+.stroke-hint {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(200,50,50,0.5);
+  width: 18px; height: 18px;
+  margin: -9px 0 0 -9px;
+  pointer-events: none;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 0.6rem;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(200,50,50,0.7);
+  background: rgba(255,255,255,0.8);
+  z-index: 5;
+}
+
+@keyframes pop {0%,100%{transform:scale(1) rotate(-1.5deg)}50%{transform:scale(1.12) rotate(-1.5deg)}}
+@keyframes wobble {0%{transform:rotate(0)}25%{transform:rotate(-2deg)}75%{transform:rotate(2deg)}100%{transform:rotate(0)}}
+.pop   { animation: pop    0.35s ease; }
+.wobble{ animation: wobble 0.4s ease; }
+
+/* Spiral binding holes */
+.holes {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 44px;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 20px 0;
+}
+.hole {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #c8b89a, #b0a080);
+  box-shadow: inset 0 2px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(255,255,255,0.4);
+}
